@@ -1,0 +1,4 @@
+- HumanPlayer and AIPlayer should implement a common interface; GameDriver can then use those methods to treat both players the same
+	for logic purposes within the game
+- SetArtFromListBox: somehow I can get below 0???
+- Better way to do Madness options? It probably shouldn't be decided by the GameDriver since the text is used by the UI
