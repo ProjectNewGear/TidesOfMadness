@@ -28,17 +28,9 @@ namespace TidesOfMadness
                 case GameStates.PlayCards:
                     {
                         //If player hands are empty
-                        if(this.GetHumanPlayer().CardsInHand.CardsInCollection.Count == 0)
+                        if (this.GetHumanPlayer().GetCardsInHand().Count == 0)
                         {
-                            GameState.CurrentGameState = GameStates.SetDreamlands;
-                            if (this.GetHumanPlayer().CardsInPlay.CardsInCollection.Any(c => c.CardNameEnum == CardNames.Dreamlands))
-                            {
-                                GameState.RequirePlayerInput = true;
-                            }
-                            else
-                            {
-                                GameState.RequirePlayerInput = false;
-                            }
+                            GameState.CurrentGameState = GameStates.ResolveMadness;
                         }
                         else
                         {
@@ -46,14 +38,23 @@ namespace TidesOfMadness
                         }
                         break;
                     }
-                case GameStates.SetDreamlands:
-                    {
-                        GameState.CurrentGameState = GameStates.ResolveMadness;
-                        GameState.RequirePlayerInput = true; //TEMP
-                        break;
-                    }
                 case GameStates.ResolveMadness:
                     {
+                        GameState.CurrentGameState = GameStates.ResolveMadnessBonus;
+                        if (GameState.HumanPlayer.MadnessThisRound > GameState.AIPlayer.MadnessThisRound)
+                        {
+                            GameState.RequirePlayerInput = true;
+                        }
+                        break;
+                    }
+                case GameStates.ResolveMadnessBonus:
+                    {
+                        GameState.CurrentGameState = GameStates.SetDreamlands;
+                        break;
+                    }
+                case GameStates.SetDreamlands:
+                    {
+                        GameState.RequirePlayerInput = true; //TEMP
                         break;
                     }
                 case GameStates.Scoring:
@@ -82,10 +83,9 @@ namespace TidesOfMadness
         public GameStateTracker InitializeGame()
         {
             GameState = new GameStateTracker();
-            GameState.HumanPlayer = new Player();
-            GameState.AIPlayer = new AIPlayer();
+            GameState.HumanPlayer = new Player("Player");
+            GameState.AIPlayer = new AIPlayer("Opponent");
             GameState.AppendToGameLog("Welcome to Tides of Madness!");
-            MadnessOptions = MadnessListOptionGenerator.GenerateMadnessListOptions();
             GameState.Deck =  DeckGenerator.GenerateDeck();
             GameState.Deck.Shuffle();
             GameState.CurrentRound = 1;
@@ -122,13 +122,13 @@ namespace TidesOfMadness
 
         private void SetUpRound()
         {
+            //Reset MadnessThisRound and CardsPlayedThisRound to 0
+            //Reset doubling flag on all cards
+            ResetRoundBasedValues();
+
             //If round 1, deal 5 cards to each player
             //Otherwise, deal two cards
             //Then move to PlayCards state
-
-            this.GetHumanPlayer().MadnessThisRound = 0;
-            this.GetAIPlayer().MadnessThisRound = 0;
-
             int cardsToDeal = (GameState.CurrentRound == 1) ? 5 : 2;
 
             GameState.AppendToGameLog($"Each player draws {cardsToDeal} new cards.");
@@ -137,45 +137,107 @@ namespace TidesOfMadness
             this.GetAIPlayer().CardsInHand.AddCardToCollection(this.GetDeck().GetTopCards(cardsToDeal));
         }
 
-        private void EachPlayerPlaysOneCard(Card playerCard, Card AICard)
+        private void EachPlayerPlaysOneCard(Player humanPlayer, AIPlayer aiPlayer, Card playerCard, Card aiCard)
         {
-            this.GetHumanPlayer().PlaySelectedCard(playerCard);
-            this.GetAIPlayer().PlaySelectedCard(AICard);
-        }
-
-        private void PlayIndividualCard(Player player, Card playedCard)
-        {
-            player.CardsInHand.CardsInCollection.Remove(playedCard);
-            player.CardsInPlay.CardsInCollection.Add(playedCard);
+            humanPlayer.PlaySelectedCard(playerCard);
+            aiPlayer.PlaySelectedCard(aiCard);
+            GameState.AppendToGameLog($"{humanPlayer.Name} plays {playerCard.CardNameDisplay} from hand");
+            GameState.AppendToGameLog($"{aiPlayer.Name} plays {aiCard.CardNameDisplay} from hand");
         }
 
         private void SetDreamlands(Player humanPlayer, AIPlayer aiPlayer)
         {
-            GameState.AppendToGameLog($"Still need to SetDreamlands");
-            if (humanPlayer.CardsInPlay.CardsInCollection.Any(c => c.CardNameEnum == CardNames.Dreamlands))
+            GameState.AppendToGameLog("Still need to SetDreamlands");
+            if (humanPlayer.GetCardsInPlay().Any(c => c.CardNameEnum == CardNames.Dreamlands))
             {
-                GameState.AppendToGameLog($"Human player has Dreamlands");
+                GameState.AppendToGameLog("Human player has Dreamlands");
             }
-            else if (aiPlayer.CardsInPlay.CardsInCollection.Any(c => c.CardNameEnum == CardNames.Dreamlands))
+            else if (aiPlayer.GetCardsInPlay().Any(c => c.CardNameEnum == CardNames.Dreamlands))
             {
-                GameState.AppendToGameLog($"AI player has Dreamlands");
+                GameState.AppendToGameLog("AI player has Dreamlands");
             }
             else
             {
-                GameState.AppendToGameLog($"Nobody has Dreamlands");
+                GameState.AppendToGameLog("Nobody has Dreamlands");
             }
         }
 
-        private void ResetDoubleFlags()
+        private void ResetRoundBasedValues()
         {
-            //Reset the DoubleScore flag on all cards
+            this.GetHumanPlayer().MadnessThisRound = 0;
+            this.GetAIPlayer().MadnessThisRound = 0;
+            this.GetHumanPlayer().CardsPlayedThisRound = 0;
+            this.GetAIPlayer().CardsPlayedThisRound = 0;
+
+            GameState.PlayerWithMostMadnessThisRound = null;
+
+            foreach (Card card in this.GetHumanPlayer().GetCardsInHand())
+            {
+                card.DoubleScore = false;
+            }
+
+            foreach (Card card in this.GetAIPlayer().GetCardsInHand())
+            {
+                card.DoubleScore = false;
+            }
         }
 
-        private void ResolveMadness()
+        private void ResolveMadnessBothPlayers(Player humanPlayer, AIPlayer aiPlayer)
         {
-            //Check to see which player got more madness this round.
-            //If it wasn't a tie, one player gets the opportunity to remove one madness token or gain 4 points
-            //Then move to the Scoring state
+            ResolveMadnessOnePlayer(humanPlayer);
+            ResolveMadnessOnePlayer(aiPlayer);
+            if (humanPlayer.MadnessThisRound > aiPlayer.MadnessThisRound)
+            {
+                GameState.PlayerWithMostMadnessThisRound = humanPlayer;
+                GameState.AppendToGameLog($"{humanPlayer.Name} had the highest Madness total this round, and gets to select a bonus.");
+                MadnessOptions = MadnessListOptionGenerator.GenerateMadnessListOptions(GameState.HumanPlayer); //There is DEFINITELY a better way and place for this
+            }
+            else if(aiPlayer.MadnessThisRound > humanPlayer.MadnessThisRound)
+            {
+                GameState.PlayerWithMostMadnessThisRound = aiPlayer;
+                GameState.AppendToGameLog($"{aiPlayer.Name} had the highest Madness total this round, and gets to select a bonus.");
+            }
+            else
+            {
+                GameState.PlayerWithMostMadnessThisRound = null;
+                GameState.AppendToGameLog("Both players had the same Madness total.");
+            }
+        }
+
+        private void ResolveMadnessOnePlayer(Player player)
+        {
+            foreach (Card card in player.GetCardsInPlay())
+            {
+                if (card.HasMadness)
+                {
+                    //player.MadnessThisRound++;
+                    player.MadnessTotal++;
+
+                }
+            }
+            GameState.AppendToGameLog($"{player.Name} gained {player.MadnessThisRound} Madess this round.");
+            GameState.AppendToGameLog($"{player.Name} had a Madness total of {player.MadnessThisRound}.");
+        }
+
+        private void ApplyMadnessBonus(Player player, MadnessBonus selectedBonus)
+        {
+            if (selectedBonus.Equals(MadnessBonus.GainPoints))
+            {
+                player.Score = player.Score + 4;
+                GameState.AppendToGameLog($"{player.Name} chose to score an additional four points.");
+            }
+            else if(selectedBonus.Equals(MadnessBonus.RemoveMadness))
+            {
+                if(player.MadnessTotal <= 0)
+                {
+                    GameState.AppendToGameLog("ERROR: Player should not have been able to remove madness if the total was 0");
+                }
+                else
+                {
+                    player.MadnessTotal--;
+                    GameState.AppendToGameLog($"{player.Name} chose to heal 1 Madness.");
+                }
+            }
         }
 
         private void ScoreRound()
@@ -208,6 +270,7 @@ namespace TidesOfMadness
 
         public void ActOnPlayerInput(PlayerInput input)
         {
+            GameState.RequirePlayerInput = false;
             do
             {
                 switch (GameState.CurrentGameState)
@@ -215,10 +278,21 @@ namespace TidesOfMadness
                     case GameStates.PlayCards:
                         Card playerCard = input.SelectedCards[0];
                         Card aiCard = this.GetAIPlayer().ChooseCardToPlay();
-                        EachPlayerPlaysOneCard(playerCard, aiCard);
+                        EachPlayerPlaysOneCard(this.GetHumanPlayer(), this.GetAIPlayer(), playerCard, aiCard);
                         SwapPlayerHands(this.GetHumanPlayer(), this.GetAIPlayer());
-                        GameState.AppendToGameLog($"Player plays {playerCard.CardNameDisplay} from hand");
-                        GameState.AppendToGameLog($"Opponent plays {aiCard.CardNameDisplay} from hand");
+                        break;
+                    case GameStates.ResolveMadness:
+                        ResolveMadnessBothPlayers(this.GetHumanPlayer(), this.GetAIPlayer());
+                        break;
+                    case GameStates.ResolveMadnessBonus:
+                        if (GameState.PlayerWithMostMadnessThisRound == this.GetHumanPlayer())
+                        {
+                            ApplyMadnessBonus(this.GetHumanPlayer(), input.SelectedBonus);
+                        }
+                        else if (GameState.PlayerWithMostMadnessThisRound == this.GetAIPlayer())
+                        {
+                            ApplyMadnessBonus(this.GetAIPlayer(), this.GetAIPlayer().ChooseMadnessBonus());
+                        }
                         break;
                     case GameStates.SetDreamlands:
                         SetDreamlands(this.GetHumanPlayer(), this.GetAIPlayer());

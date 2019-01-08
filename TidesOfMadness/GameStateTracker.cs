@@ -15,6 +15,8 @@ namespace TidesOfMadness
         public string GameLog { get; set; }
         public bool RequirePlayerInput { get; set; }
 
+        public Player PlayerWithMostMadnessThisRound {get; set;}
+
         public void AppendToGameLog(string textToAppend)
         {
             GameLog += textToAppend + Environment.NewLine;

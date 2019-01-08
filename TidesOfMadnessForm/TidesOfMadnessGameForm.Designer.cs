@@ -39,7 +39,7 @@
             this.lblOpponentName = new System.Windows.Forms.Label();
             this.lblOppMadnessTotal = new System.Windows.Forms.Label();
             this.lblOppMadnessThisRound = new System.Windows.Forms.Label();
-            this.lblOppPointsThisRound = new System.Windows.Forms.Label();
+            this.lblOppPointsTotal = new System.Windows.Forms.Label();
             this.lblHumanLabel = new System.Windows.Forms.Label();
             this.lblPlayerPointsTotal = new System.Windows.Forms.Label();
             this.lblPlayerMadnessThisRound = new System.Windows.Forms.Label();
@@ -140,9 +140,9 @@
             this.lblOppMadnessTotal.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOppMadnessTotal.Location = new System.Drawing.Point(337, 80);
             this.lblOppMadnessTotal.Name = "lblOppMadnessTotal";
-            this.lblOppMadnessTotal.Size = new System.Drawing.Size(223, 29);
+            this.lblOppMadnessTotal.Size = new System.Drawing.Size(199, 29);
             this.lblOppMadnessTotal.TabIndex = 9;
-            this.lblOppMadnessTotal.Text = "Madness Total: 0";
+            this.lblOppMadnessTotal.Text = "Madness Total:";
             // 
             // lblOppMadnessThisRound
             // 
@@ -150,19 +150,19 @@
             this.lblOppMadnessThisRound.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOppMadnessThisRound.Location = new System.Drawing.Point(337, 109);
             this.lblOppMadnessThisRound.Name = "lblOppMadnessThisRound";
-            this.lblOppMadnessThisRound.Size = new System.Drawing.Size(293, 29);
+            this.lblOppMadnessThisRound.Size = new System.Drawing.Size(269, 29);
             this.lblOppMadnessThisRound.TabIndex = 10;
-            this.lblOppMadnessThisRound.Text = "Madness This Round: 0";
+            this.lblOppMadnessThisRound.Text = "Madness This Round:";
             // 
-            // lblOppPointsThisRound
+            // lblOppPointsTotal
             // 
-            this.lblOppPointsThisRound.AutoSize = true;
-            this.lblOppPointsThisRound.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOppPointsThisRound.Location = new System.Drawing.Point(337, 51);
-            this.lblOppPointsThisRound.Name = "lblOppPointsThisRound";
-            this.lblOppPointsThisRound.Size = new System.Drawing.Size(202, 29);
-            this.lblOppPointsThisRound.TabIndex = 11;
-            this.lblOppPointsThisRound.Text = "Points Total: 0";
+            this.lblOppPointsTotal.AutoSize = true;
+            this.lblOppPointsTotal.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOppPointsTotal.Location = new System.Drawing.Point(337, 51);
+            this.lblOppPointsTotal.Name = "lblOppPointsTotal";
+            this.lblOppPointsTotal.Size = new System.Drawing.Size(178, 29);
+            this.lblOppPointsTotal.TabIndex = 11;
+            this.lblOppPointsTotal.Text = "Points Total:";
             // 
             // lblHumanLabel
             // 
@@ -180,9 +180,9 @@
             this.lblPlayerPointsTotal.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerPointsTotal.Location = new System.Drawing.Point(337, 243);
             this.lblPlayerPointsTotal.Name = "lblPlayerPointsTotal";
-            this.lblPlayerPointsTotal.Size = new System.Drawing.Size(202, 29);
+            this.lblPlayerPointsTotal.Size = new System.Drawing.Size(178, 29);
             this.lblPlayerPointsTotal.TabIndex = 15;
-            this.lblPlayerPointsTotal.Text = "Points Total: 0";
+            this.lblPlayerPointsTotal.Text = "Points Total:";
             // 
             // lblPlayerMadnessThisRound
             // 
@@ -190,9 +190,9 @@
             this.lblPlayerMadnessThisRound.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerMadnessThisRound.Location = new System.Drawing.Point(337, 301);
             this.lblPlayerMadnessThisRound.Name = "lblPlayerMadnessThisRound";
-            this.lblPlayerMadnessThisRound.Size = new System.Drawing.Size(293, 29);
+            this.lblPlayerMadnessThisRound.Size = new System.Drawing.Size(269, 29);
             this.lblPlayerMadnessThisRound.TabIndex = 14;
-            this.lblPlayerMadnessThisRound.Text = "Madness This Round: 0";
+            this.lblPlayerMadnessThisRound.Text = "Madness This Round:";
             // 
             // lblPlayerMadnessTotal
             // 
@@ -200,9 +200,9 @@
             this.lblPlayerMadnessTotal.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPlayerMadnessTotal.Location = new System.Drawing.Point(337, 272);
             this.lblPlayerMadnessTotal.Name = "lblPlayerMadnessTotal";
-            this.lblPlayerMadnessTotal.Size = new System.Drawing.Size(223, 29);
+            this.lblPlayerMadnessTotal.Size = new System.Drawing.Size(199, 29);
             this.lblPlayerMadnessTotal.TabIndex = 13;
-            this.lblPlayerMadnessTotal.Text = "Madness Total: 0";
+            this.lblPlayerMadnessTotal.Text = "Madness Total:";
             // 
             // label1
             // 
@@ -235,7 +235,7 @@
             this.Controls.Add(this.lblPlayerMadnessThisRound);
             this.Controls.Add(this.lblPlayerMadnessTotal);
             this.Controls.Add(this.lblHumanLabel);
-            this.Controls.Add(this.lblOppPointsThisRound);
+            this.Controls.Add(this.lblOppPointsTotal);
             this.Controls.Add(this.lblOppMadnessThisRound);
             this.Controls.Add(this.lblOppMadnessTotal);
             this.Controls.Add(this.lblOpponentName);
@@ -269,7 +269,7 @@
         private System.Windows.Forms.Label lblOpponentName;
         private System.Windows.Forms.Label lblOppMadnessTotal;
         private System.Windows.Forms.Label lblOppMadnessThisRound;
-        private System.Windows.Forms.Label lblOppPointsThisRound;
+        private System.Windows.Forms.Label lblOppPointsTotal;
         private System.Windows.Forms.Label lblHumanLabel;
         private System.Windows.Forms.Label lblPlayerPointsTotal;
         private System.Windows.Forms.Label lblPlayerMadnessThisRound;

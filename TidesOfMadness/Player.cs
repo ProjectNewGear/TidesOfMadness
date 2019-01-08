@@ -8,17 +8,20 @@ namespace TidesOfMadness
     {
         public CardCollection CardsInHand { get; set; }
         public CardCollection CardsInPlay { get; set; }
+        public int CardsPlayedThisRound { get; set; }
         public int MadnessThisRound { get; set; }
         public int MadnessTotal { get; set; }
         public int Score { get; set; }
+        public string Name { get; set; }
 
-        public Player()
+        public Player(string name)
         {
             CardsInHand = new CardCollection();
             CardsInPlay = new CardCollection();
             MadnessThisRound = 0;
             MadnessTotal = 0;
             Score = 0;
+            Name = name;
         }
 
         public void PlaySelectedCard(Card card)
@@ -29,21 +32,30 @@ namespace TidesOfMadness
             //Otherwise, return false
 
             //BVJ TODO: Error handling
-
             if (card.HasMadness)
             {
                 MadnessThisRound++;
-                MadnessTotal++;
             }
 
-
-            if (card.CardNameEnum == CardNames.Shub_Niggurath && CardsInPlay.CardsInCollection.Count > 0)
+            if (card.CardNameEnum == CardNames.Shub_Niggurath && CardsInPlay.CardsInCollection.Count > 0 && CardsPlayedThisRound > 0)
             {
                 CardsInPlay.CardsInCollection[CardsInPlay.CardsInCollection.Count - 1].DoubleScore = true;
             }
 
             CardsInHand.CardsInCollection.Remove(card);
             CardsInPlay.CardsInCollection.Add(card);
+
+            CardsPlayedThisRound++;
+        }
+
+        public List<Card> GetCardsInHand()
+        {
+            return this.CardsInHand.CardsInCollection;
+        }
+
+        public List<Card> GetCardsInPlay()
+        {
+            return this.CardsInPlay.CardsInCollection;
         }
     }
 }

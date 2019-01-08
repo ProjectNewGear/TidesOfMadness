@@ -25,13 +25,12 @@ namespace TidesOfMadnessForm
             Driver = new GameDriver();
             Driver.InitializeGame();
             UpdateGameLog(Driver.GetGameLog());
+            UpdateScoreDisplays();
 
             pbxCardImage.SizeMode = PictureBoxSizeMode.StretchImage;
             lbxHumanHand.DisplayMember = "CardNameDisplay";
             lbxHumanInPlay.DisplayMember = "CardNameDisplay";
             lbxOppInPlay.DisplayMember = "CardNameDisplay";
-
-            
 
             UpdateCardDisplays();
             pbxCardImage.ImageLocation = SetArtFromListBox(lbxHumanHand, 0);
@@ -55,16 +54,16 @@ namespace TidesOfMadnessForm
                         returnText = "Select a card in hand to play.";
                         break;
                     }
-                case GameStates.SetDreamlands:
-                    {
-                        returnText = "Pick a suit for Dreamlands.";
-                        break;
-                    }
-                case GameStates.ResolveMadness:
+                case GameStates.ResolveMadnessBonus:
                     {
                         returnText = "You have the highest Madness total this round." + Environment.NewLine + "Would you like to remove 1 Madness token or gain 4 points?";
                         break;
                     }
+                case GameStates.SetDreamlands:
+                    {
+                        returnText = "Pick a suit for Dreamlands.";
+                        break;
+                    }    
                 case GameStates.Scoring:
                     {
                         returnText = "Something went wrong...";
@@ -108,25 +107,25 @@ namespace TidesOfMadnessForm
                         lbxHumanInPlay.SelectionMode = SelectionMode.One;
                         break;
                     }
-                case GameStates.SetDreamlands:
-                    {
-                        cbxPlayerChoice.Visible = true;
-                        UpdateDropdownWithSuits();
-                        lbxHumanInPlay.ClearSelected();
-                        lbxHumanInPlay.SelectionMode = SelectionMode.One;
-                        break;
-                    }
-                case GameStates.ResolveMadness:
+                case GameStates.ResolveMadnessBonus:
                     {
                         cbxPlayerChoice.Visible = true;
                         cbxPlayerChoice.Items.Clear();
-                        foreach(ResolveMadnessOption option in Driver.MadnessOptions)
+                        foreach (ResolveMadnessOption option in Driver.MadnessOptions)
                         {
                             cbxPlayerChoice.Items.Add(option);
                         }
                         cbxPlayerChoice.DisplayMember = "Text";
                         lbxHumanInPlay.ClearSelected();
                         lbxHumanInPlay.SelectionMode = SelectionMode.One;
+                        break;
+                    }
+                case GameStates.SetDreamlands:
+                    {
+                        //cbxPlayerChoice.Visible = true;
+                        //UpdateDropdownWithSuits();
+                        //lbxHumanInPlay.ClearSelected();
+                        //lbxHumanInPlay.SelectionMode = SelectionMode.One;
                         break;
                     }
                 case GameStates.Scoring:
@@ -187,11 +186,25 @@ namespace TidesOfMadnessForm
             }
         }
 
+        private void UpdateScoreDisplays()
+        {
+            lblOppPointsTotal.Text = $"Points Total: {Driver.GetAIPlayer().Score}";
+            lblOppMadnessTotal.Text = $"Madness Total: {Driver.GetAIPlayer().MadnessTotal}";
+            lblOppMadnessThisRound.Text = $"Madness This Round: {Driver.GetAIPlayer().MadnessThisRound}";
+
+            lblPlayerPointsTotal.Text = $"Points Total: {Driver.GetHumanPlayer().Score}";
+            lblPlayerMadnessTotal.Text = $"Madness Total: {Driver.GetHumanPlayer().MadnessTotal}";
+            lblPlayerMadnessThisRound.Text = $"Madness This Round: {Driver.GetHumanPlayer().MadnessThisRound}";
+        }
+
         private void UpdateDropdownWithMadnessOptions()
         {
             cbxPlayerChoice.Items.Clear();
             cbxPlayerChoice.Items.Add(MadnessBonus.GainPoints);
-            cbxPlayerChoice.Items.Add(MadnessBonus.RemoveMadness);
+            if (Driver.GetHumanPlayer().MadnessTotal > 0)
+            {
+                cbxPlayerChoice.Items.Add(MadnessBonus.RemoveMadness);
+            }
         }
 
         private void UpdateDropdownWithSuits()
@@ -211,6 +224,7 @@ namespace TidesOfMadnessForm
             {
                 case GameStates.Setup:
                     {
+                        UpdateScoreDisplays();
                         break;
                     }
                 case GameStates.PlayCards:
@@ -229,19 +243,26 @@ namespace TidesOfMadnessForm
                         }
                         break;
                     }
-                case GameStates.SetDreamlands:
+                case GameStates.ResolveMadnessBonus:
                     {
                         PlayerInput input = new PlayerInput();
-                        input.SelectedSuit = (Suits)cbxPlayerChoice.SelectedItem;
+                        ResolveMadnessOption chosenOption = (ResolveMadnessOption)cbxPlayerChoice.SelectedItem;
+                        input.SelectedBonus = chosenOption.Bonus;
                         Driver.ActOnPlayerInput(input);
-                        UpdateCardDisplays();
-                        UpdateUISettings(Driver.GetCurrentGameState());
+                        //UpdateCardDisplays();
+                        //UpdateUISettings(Driver.GetCurrentGameState());
                         UpdateGameLog(Driver.GetGameLog());
-                        UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
                         break;
                     }
-                case GameStates.ResolveMadness:
+                case GameStates.SetDreamlands:
                     {
+                        //PlayerInput input = new PlayerInput();
+                        //input.SelectedSuit = (Suits)cbxPlayerChoice.SelectedItem;
+                        //Driver.ActOnPlayerInput(input);
+                        //UpdateCardDisplays();
+                        //UpdateUISettings(Driver.GetCurrentGameState());
+                        //UpdateGameLog(Driver.GetGameLog());
+                        //UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
                         break;
                     }
                 case GameStates.Scoring:
@@ -265,6 +286,7 @@ namespace TidesOfMadnessForm
                         break;
                     }
             }
+            UpdateScoreDisplays();
         }
 
         private void UpdateGameLog(string result)

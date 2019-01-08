@@ -56,8 +56,9 @@ namespace TidesOfMadness
     {
         Setup,
         PlayCards,
-        SetDreamlands,
         ResolveMadness,
+        ResolveMadnessBonus,
+        SetDreamlands,
         Scoring,
         PickUpCards,
         ChooseCardToReplay,

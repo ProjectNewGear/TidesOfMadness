@@ -6,7 +6,7 @@ namespace TidesOfMadness
 {
     public static class MadnessListOptionGenerator
     {
-        public static List<ResolveMadnessOption> GenerateMadnessListOptions()
+        public static List<ResolveMadnessOption> GenerateMadnessListOptions(Player player)
         {
             List<ResolveMadnessOption> options = new List<ResolveMadnessOption>();
 
@@ -15,10 +15,13 @@ namespace TidesOfMadness
                     new ResolveMadnessOption(MadnessBonus.GainPoints, "Gain 4 Points")
                 );
 
-            options.Add
-                (
-                    new ResolveMadnessOption(MadnessBonus.RemoveMadness, "Remove 1 Madness Token")
-                );
+            if (player.MadnessTotal > 0)
+            {
+                options.Add
+                    (
+                        new ResolveMadnessOption(MadnessBonus.RemoveMadness, "Remove 1 Madness Token")
+                    );
+            }
 
             return options;
         }
