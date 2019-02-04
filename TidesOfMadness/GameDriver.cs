@@ -8,7 +8,8 @@ namespace TidesOfMadness
 {
     public class GameDriver
     {
-        public List<ResolveMadnessOption> MadnessOptions;  //TODO: This should probably go elsewhere
+        public List<ResolveMadnessOption> MadnessOptions;   //TODO: This should probably go elsewhere
+        public List<SuitOption> SuitOptions;                //TODO: This too
 
         public GameStateTracker GameState;
         
@@ -50,15 +51,22 @@ namespace TidesOfMadness
                 case GameStates.ResolveMadnessBonus:
                     {
                         GameState.CurrentGameState = GameStates.SetDreamlands;
+                        Player tempPlayer = SeeWhoHasDreamlands(this.GetHumanPlayer(), this.GetAIPlayer());
+                        if (tempPlayer != null && tempPlayer == GetHumanPlayer())
+                        {
+                            GameState.RequirePlayerInput = true;
+                        }
                         break;
                     }
                 case GameStates.SetDreamlands:
                     {
-                        GameState.RequirePlayerInput = true; //TEMP
+                        GameState.CurrentGameState = GameStates.Scoring;
+                        GameState.RequirePlayerInput = true;    //TEMP
                         break;
                     }
                 case GameStates.Scoring:
                     {
+                        GameState.RequirePlayerInput = true;    //TEMP
                         break;
                     }
                 case GameStates.PickUpCards:
@@ -90,6 +98,7 @@ namespace TidesOfMadness
             GameState.Deck.Shuffle();
             GameState.CurrentRound = 1;
             GameState.CurrentGameState = GameStates.Setup;
+            SuitOptions = ListOptionGenerator.GenerateSuitOptions();
             SetUpRound();
             RefreshStatesAndInputStatus();
             return GameState;
@@ -145,20 +154,36 @@ namespace TidesOfMadness
             GameState.AppendToGameLog($"{aiPlayer.Name} plays {aiCard.CardNameDisplay} from hand");
         }
 
-        private void SetDreamlands(Player humanPlayer, AIPlayer aiPlayer)
+        private Player SeeWhoHasDreamlands(Player humanPlayer, AIPlayer aiPlayer)
         {
-            GameState.AppendToGameLog("Still need to SetDreamlands");
-            if (humanPlayer.GetCardsInPlay().Any(c => c.CardNameEnum == CardNames.Dreamlands))
+            if (humanPlayer.CheckForSpecificCard(CardNames.Dreamlands))
             {
-                GameState.AppendToGameLog("Human player has Dreamlands");
+                GameState.AppendToGameLog($"{humanPlayer.Name} has Dreamlands in play.");
+                return humanPlayer;
             }
-            else if (aiPlayer.GetCardsInPlay().Any(c => c.CardNameEnum == CardNames.Dreamlands))
+            else if (aiPlayer.CheckForSpecificCard(CardNames.Dreamlands))
             {
-                GameState.AppendToGameLog("AI player has Dreamlands");
+                GameState.AppendToGameLog($"{aiPlayer.Name} has Dreamlands in play.");
+                return aiPlayer;
             }
             else
             {
-                GameState.AppendToGameLog("Nobody has Dreamlands");
+                GameState.AppendToGameLog("Nobody has Dreamlands in play.");
+                return null;
+            }
+        }
+
+        private void SetDreamlandsSuit(Player player, SuitOption option)
+        {
+            Card dreamlands = player.GetCardsInPlay().FirstOrDefault(n => n.CardNameEnum == CardNames.Dreamlands);
+            if (dreamlands == null)
+            {
+                GameState.AppendToGameLog($"ERROR: How did we get here? {player.Name} does not have Dreamlands in play!");
+            }
+            else
+            {
+                dreamlands.Suit = option.Suit;
+                GameState.AppendToGameLog($"{player.Name} has chosen {option.Text} for the Dreamlands Suit.");
             }
         }
 
@@ -180,6 +205,8 @@ namespace TidesOfMadness
             {
                 card.DoubleScore = false;
             }
+
+            ResetDreamlandsSuit();
         }
 
         private void ResolveMadnessBothPlayers(Player humanPlayer, AIPlayer aiPlayer)
@@ -190,7 +217,7 @@ namespace TidesOfMadness
             {
                 GameState.PlayerWithMostMadnessThisRound = humanPlayer;
                 GameState.AppendToGameLog($"{humanPlayer.Name} had the highest Madness total this round, and gets to select a bonus.");
-                MadnessOptions = MadnessListOptionGenerator.GenerateMadnessListOptions(GameState.HumanPlayer); //There is DEFINITELY a better way and place for this
+                MadnessOptions = ListOptionGenerator.GenerateMadnessListOptions(GameState.HumanPlayer); //There is DEFINITELY a better way and place for this
             }
             else if(aiPlayer.MadnessThisRound > humanPlayer.MadnessThisRound)
             {
@@ -210,7 +237,6 @@ namespace TidesOfMadness
             {
                 if (card.HasMadness)
                 {
-                    //player.MadnessThisRound++;
                     player.MadnessTotal++;
 
                 }
@@ -236,6 +262,25 @@ namespace TidesOfMadness
                 {
                     player.MadnessTotal--;
                     GameState.AppendToGameLog($"{player.Name} chose to heal 1 Madness.");
+                }
+            }
+        }
+
+        private void ResetDreamlandsSuit()
+        {
+            ResetDreamlandsSuit(GetHumanPlayer().GetCardsInHand());
+            ResetDreamlandsSuit(GetHumanPlayer().GetCardsInPlay());
+            ResetDreamlandsSuit(GetAIPlayer().GetCardsInHand());
+            ResetDreamlandsSuit(GetAIPlayer().GetCardsInPlay());
+        }
+
+        private void ResetDreamlandsSuit(List<Card> cards)
+        {
+            foreach(Card card in cards)
+            {
+                if(card.CardNameEnum == CardNames.Dreamlands)
+                {
+                    card.Suit = Suits.None;
                 }
             }
         }
@@ -295,7 +340,14 @@ namespace TidesOfMadness
                         }
                         break;
                     case GameStates.SetDreamlands:
-                        SetDreamlands(this.GetHumanPlayer(), this.GetAIPlayer());
+                        if (this.GetHumanPlayer().CheckForSpecificCard(CardNames.Dreamlands))
+                        {
+                            SetDreamlandsSuit(this.GetHumanPlayer(), input.SelectedSuit);
+                        }
+                        else if (this.GetAIPlayer().CheckForSpecificCard(CardNames.Dreamlands))
+                        {
+                            SetDreamlandsSuit(this.GetAIPlayer(), this.GetAIPlayer().ChooseDreamlandsSuit(this.SuitOptions));
+                        }
                         break;
                     case GameStates.ChooseCardToReplay:
                         break;

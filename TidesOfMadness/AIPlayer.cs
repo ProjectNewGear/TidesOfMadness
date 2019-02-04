@@ -42,8 +42,6 @@ namespace TidesOfMadness
         {
             //Choose to gain extra points or remove a madness token
             //The more Madness the AI has, the more likely it is to remove a Madness token
-            Random random = new Random();
-
             int controlValue = random.Next(1, 10);
 
             if (controlValue <= this.MadnessTotal)
@@ -51,6 +49,11 @@ namespace TidesOfMadness
                 return MadnessBonus.GainPoints;
             }
             return MadnessBonus.RemoveMadness;
+        }
+
+        public SuitOption ChooseDreamlandsSuit(List<SuitOption> suitOptions)
+        {
+            return suitOptions[random.Next(suitOptions.Count)];
         }
 
         public List<Card> ChooseCardsToReturnToHand()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TidesOfMadness
@@ -56,6 +57,15 @@ namespace TidesOfMadness
         public List<Card> GetCardsInPlay()
         {
             return this.CardsInPlay.CardsInCollection;
+        }
+
+        public bool CheckForSpecificCard(CardNames cardName)
+        {
+            if (GetCardsInPlay().Any(c => c.CardNameEnum == cardName))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
