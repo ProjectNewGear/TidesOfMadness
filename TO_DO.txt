@@ -4,3 +4,5 @@
 - Better way to do Madness options? It probably shouldn't be decided by the GameDriver since the text is used by the UI
 
 ---NEXT TIME ON DRAGONBALL Z:---
+
+- Update Scoring to account for Shub

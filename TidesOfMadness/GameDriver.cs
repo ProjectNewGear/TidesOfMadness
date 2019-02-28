@@ -61,7 +61,6 @@ namespace TidesOfMadness
                 case GameStates.SetDreamlands:
                     {
                         GameState.CurrentGameState = GameStates.Scoring;
-                        GameState.RequirePlayerInput = true;    //TEMP
                         break;
                     }
                 case GameStates.Scoring:
@@ -285,11 +284,10 @@ namespace TidesOfMadness
             }
         }
 
-        private void ScoreRound()
+        private void ScoreRound(Player firstPlayer, Player secondPlayer)
         {
-            //Score all points on cards.
-            //If this isn't the last round, move to PickUpCards state
-            //Otherwise, end the game
+            firstPlayer.Score += ScoreCalculator.CalculateScore(firstPlayer, secondPlayer);
+            secondPlayer.Score += ScoreCalculator.CalculateScore(secondPlayer, firstPlayer);
         }
 
         private void PickUpCards()
@@ -347,6 +345,11 @@ namespace TidesOfMadness
                         else if (this.GetAIPlayer().CheckForSpecificCard(CardNames.Dreamlands))
                         {
                             SetDreamlandsSuit(this.GetAIPlayer(), this.GetAIPlayer().ChooseDreamlandsSuit(this.SuitOptions));
+                        }
+                        break;
+                    case GameStates.Scoring:
+                        {
+                            ScoreRound(this.GetHumanPlayer(), this.GetAIPlayer());
                         }
                         break;
                     case GameStates.ChooseCardToReplay:
