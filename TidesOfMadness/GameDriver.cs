@@ -65,11 +65,13 @@ namespace TidesOfMadness
                     }
                 case GameStates.Scoring:
                     {
-                        GameState.RequirePlayerInput = true;    //TEMP
+                        GameState.CurrentGameState = GameStates.PickUpCards;
+                        GameState.RequirePlayerInput = true;
                         break;
                     }
                 case GameStates.PickUpCards:
                     {
+                        GameState.RequirePlayerInput = true;
                         break;
                     }
                 case GameStates.ChooseCardToReplay:
@@ -155,12 +157,12 @@ namespace TidesOfMadness
 
         private Player SeeWhoHasDreamlands(Player humanPlayer, AIPlayer aiPlayer)
         {
-            if (humanPlayer.CheckForSpecificCard(CardNames.Dreamlands))
+            if (humanPlayer.CheckForSpecificCardInPlay(CardNames.Dreamlands))
             {
                 GameState.AppendToGameLog($"{humanPlayer.Name} has Dreamlands in play.");
                 return humanPlayer;
             }
-            else if (aiPlayer.CheckForSpecificCard(CardNames.Dreamlands))
+            else if (aiPlayer.CheckForSpecificCardInPlay(CardNames.Dreamlands))
             {
                 GameState.AppendToGameLog($"{aiPlayer.Name} has Dreamlands in play.");
                 return aiPlayer;
@@ -290,11 +292,9 @@ namespace TidesOfMadness
             secondPlayer.Score += ScoreCalculator.CalculateScore(secondPlayer, firstPlayer);
         }
 
-        private void PickUpCards()
+        private void PickUpCards(Player player, List<Card> selectedCards)
         {
-            //Reset the "double score" flag on all cards
-            //Each player picks up 5 cards from play and returns them to their hand
-            //Then move to the ChooseCardToReplay state
+            player.CardsInHand.CardsInCollection = selectedCards;
         }
 
         private void ReplayCard()
@@ -338,11 +338,11 @@ namespace TidesOfMadness
                         }
                         break;
                     case GameStates.SetDreamlands:
-                        if (this.GetHumanPlayer().CheckForSpecificCard(CardNames.Dreamlands))
+                        if (this.GetHumanPlayer().CheckForSpecificCardInPlay(CardNames.Dreamlands))
                         {
                             SetDreamlandsSuit(this.GetHumanPlayer(), input.SelectedSuit);
                         }
-                        else if (this.GetAIPlayer().CheckForSpecificCard(CardNames.Dreamlands))
+                        else if (this.GetAIPlayer().CheckForSpecificCardInPlay(CardNames.Dreamlands))
                         {
                             SetDreamlandsSuit(this.GetAIPlayer(), this.GetAIPlayer().ChooseDreamlandsSuit(this.SuitOptions));
                         }
@@ -350,6 +350,12 @@ namespace TidesOfMadness
                     case GameStates.Scoring:
                         {
                             ScoreRound(this.GetHumanPlayer(), this.GetAIPlayer());
+                        }
+                        break;
+                    case GameStates.PickUpCards:
+                        {
+                            PickUpCards(this.GetHumanPlayer(), input.SelectedCards);
+                            this.GetAIPlayer().ReturnCardsToHand();
                         }
                         break;
                     case GameStates.ChooseCardToReplay:

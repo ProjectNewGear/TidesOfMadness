@@ -14,31 +14,32 @@ namespace TidesOfMadness
 
             foreach (Card card in me.CardsInPlay.CardsInCollection)
             {
+                int multiplier = card.DoubleScore == true ? 2 : 1;
                 switch (card.ScoreCondition)
                 {
                     case ScoreConditions.ScoreOneMajority:
                         {
-                            score += CalculateScoreByOneMajority(card.SuitsToScore[0], card.ScoreValue, me.CardsInPlay, you.CardsInPlay);
+                            score += CalculateScoreByOneMajority(card.SuitsToScore[0], card.ScoreValue, me.CardsInPlay, you.CardsInPlay, multiplier);
                         }
                         break;
                     case ScoreConditions.ScoreEachMajority:
                         {
-                            score += CalculateScoreByAllMajorities(card.ScoreValue, me.CardsInPlay, you.CardsInPlay);
+                            score += CalculateScoreByAllMajorities(card.ScoreValue, me.CardsInPlay, you.CardsInPlay, multiplier);
                         }
                         break;
                     case ScoreConditions.ScoreBySet:
                         {
-                            score += CalculateScoreBySet(card.SuitsToScore, card.ScoreValue, me.CardsInPlay);
+                            score += CalculateScoreBySet(card.SuitsToScore, card.ScoreValue, me.CardsInPlay, multiplier);
                         }
                         break;
                     case ScoreConditions.ScoreMissingSuits:
                         {
-                            score += CalculateScoreByMissingSuits(card.ScoreValue, me.CardsInPlay);
+                            score += CalculateScoreByMissingSuits(card.ScoreValue, me.CardsInPlay, multiplier);
                         }
                         break;
                     case ScoreConditions.ScoreByMadness:
                         {
-                            score += CalculateScoreByMadness(me.MadnessTotal);
+                            score += CalculateScoreByMadness(me.MadnessTotal, multiplier);
                         }
                         break;
                     default:
@@ -63,7 +64,7 @@ namespace TidesOfMadness
             return cardsOfThisSuit;
         }
 
-        public static int CalculateScoreBySet(List<Suits> suitsToCheck, int pointsPerSet, CardCollection playerCollection)
+        public static int CalculateScoreBySet(List<Suits> suitsToCheck, int pointsPerSet, CardCollection playerCollection, int multiplier)
         {
             int minimumSuits = 6; //Can never have more than this - 5 of a suit plus one copy;
 
@@ -76,31 +77,31 @@ namespace TidesOfMadness
                 }
             }
 
-            return minimumSuits * pointsPerSet;
+            return minimumSuits * pointsPerSet * multiplier;
         }
 
-        public static int CalculateScoreByOneMajority(Suits suitToCheck, int points, CardCollection playerCollection, CardCollection opponentCollection)
+        public static int CalculateScoreByOneMajority(Suits suitToCheck, int points, CardCollection playerCollection, CardCollection opponentCollection, int multiplier)
         {
             if (GetCountOfOneSuitInPlayerCollection(suitToCheck, playerCollection) > GetCountOfOneSuitInPlayerCollection(suitToCheck, opponentCollection))
             {
-                return points;
+                return points * multiplier;
             }
             else return 0;
         }
 
-        public static int CalculateScoreByAllMajorities(int points, CardCollection playerCollection, CardCollection opponentCollection)
+        public static int CalculateScoreByAllMajorities(int points, CardCollection playerCollection, CardCollection opponentCollection, int multiplier)
         {
             int score = 0;
 
             foreach (Suits suitToCheck in realSuits)
             {
-                score += CalculateScoreByOneMajority(suitToCheck, points, playerCollection, opponentCollection);
+                score += CalculateScoreByOneMajority(suitToCheck, points, playerCollection, opponentCollection, multiplier);
             }
 
-            return score;
+            return score * multiplier;
         }
 
-        public static int CalculateScoreByMissingSuits(int points, CardCollection playerCollection)
+        public static int CalculateScoreByMissingSuits(int points, CardCollection playerCollection, int multiplier)
         {
             int score = 0;
 
@@ -111,12 +112,12 @@ namespace TidesOfMadness
                     score += points;
                 }
             }
-            return score;
+            return score * multiplier;
         }
 
-        public static int CalculateScoreByMadness(int myMadness)
+        public static int CalculateScoreByMadness(int myMadness, int multiplier)
         {
-            return myMadness;
+            return myMadness * multiplier;
         }
     }
 }

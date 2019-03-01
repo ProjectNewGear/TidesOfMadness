@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TidesOfMadness
@@ -56,11 +57,25 @@ namespace TidesOfMadness
             return suitOptions[random.Next(suitOptions.Count)];
         }
 
-        public List<Card> ChooseCardsToReturnToHand()
+        public void ReturnCardsToHand()
         {
             //Choose the five cards to return to hand at the end of the round
             //NEVER leave Shub Niggurath on the table, since it won't do anything
-            return null;
+            int cardsInList = 0;
+
+            Card cardToReturn = this.GetCardsInPlay().FirstOrDefault(c => c.CardNameEnum == CardNames.Shub_Niggurath);
+            if (cardToReturn != null)
+            {
+                this.ReturnCardToHand(cardToReturn);
+                cardsInList++;
+            }
+
+            do
+            {
+                int cardToGrab = random.Next(0, GetCardsInPlay().Count - 1);
+                this.ReturnCardToHand(this.CardsInPlay.CardsInCollection[cardToGrab]);
+                cardsInList++;
+            } while (cardsInList < 5);
         }
     }
 }

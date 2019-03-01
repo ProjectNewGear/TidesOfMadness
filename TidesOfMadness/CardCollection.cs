@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TidesOfMadness
@@ -31,15 +32,6 @@ namespace TidesOfMadness
                 }
                 CardsInCollection = newList;
             }
-        }
-
-        public Card GetSpecificCard(Card cardToGet)
-        {
-            //Check to see if a specific card is in this CardCollection
-            //If it is remove it and return it
-            //If it is not, return null
-
-            return null;
         }
 
         public Card GetTopCard()
@@ -79,10 +71,15 @@ namespace TidesOfMadness
 
         public void AddCardToCollection(List<Card> cardsToAdd)
         {
-            foreach(Card cardToAdd in cardsToAdd)
+            foreach (Card cardToAdd in cardsToAdd)
             {
                 AddCardToCollection(cardToAdd);
             }
+        }
+
+        public Card GetCardByEnumName(CardNames cardName)
+        {
+            return this.CardsInCollection.FirstOrDefault(c => c.CardNameEnum == cardName);
         }
     }
 }

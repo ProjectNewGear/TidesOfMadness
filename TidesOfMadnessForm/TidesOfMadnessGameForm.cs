@@ -228,7 +228,6 @@ namespace TidesOfMadnessForm
                             UpdateCardDisplays();
                             UpdateUISettings(Driver.GetCurrentGameState());
                             UpdateGameLog(Driver.GetGameLog());
-                            UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
                         }
                         break;
                     }
@@ -249,7 +248,6 @@ namespace TidesOfMadnessForm
                         Driver.ActOnPlayerInput(input);
                         UpdateUISettings(Driver.GetCurrentGameState());
                         UpdateGameLog(Driver.GetGameLog());
-                        UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
                         break;
                     }
                 case GameStates.Scoring:
@@ -258,6 +256,15 @@ namespace TidesOfMadnessForm
                     }
                 case GameStates.PickUpCards:
                     {
+                        List<Card> selectedCards = lbxHumanInPlay.SelectedItems.Cast<Card>().ToList();
+                        if (selectedCards.Count == 5)
+                        {
+                            PlayerInput input = new PlayerInput();
+                            input.SelectedCards = selectedCards;
+                            Driver.ActOnPlayerInput(input);
+                            UpdateUISettings(Driver.GetCurrentGameState());
+                            UpdateGameLog(Driver.GetGameLog());
+                        }
                         break;
                     }
                 case GameStates.ChooseCardToReplay:
@@ -273,6 +280,7 @@ namespace TidesOfMadnessForm
                         break;
                     }
             }
+            UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
             UpdateScoreDisplays();
         }
 

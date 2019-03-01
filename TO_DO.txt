@@ -2,7 +2,8 @@
 	for logic purposes within the game
 - SetArtFromListBox: somehow I can get below 0???
 - Better way to do Madness options? It probably shouldn't be decided by the GameDriver since the text is used by the UI
+-Turn each GameState into it's own object, so that I don't have this weird ActOnPlayerInput loop that goes through complex CASE statements
 
 ---NEXT TIME ON DRAGONBALL Z:---
 
-- Update Scoring to account for Shub
+--Refresh list boxes on UI after returning five cards (data binding? BindingList?)

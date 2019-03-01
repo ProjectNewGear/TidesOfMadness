@@ -49,6 +49,12 @@ namespace TidesOfMadness
             CardsPlayedThisRound++;
         }
 
+        public void ReturnCardToHand(Card card)
+        {
+            CardsInPlay.CardsInCollection.Remove(card);
+            CardsInHand.CardsInCollection.Add(card);
+        }
+
         public List<Card> GetCardsInHand()
         {
             return this.CardsInHand.CardsInCollection;
@@ -59,7 +65,7 @@ namespace TidesOfMadness
             return this.CardsInPlay.CardsInCollection;
         }
 
-        public bool CheckForSpecificCard(CardNames cardName)
+        public bool CheckForSpecificCardInPlay(CardNames cardName)
         {
             if (GetCardsInPlay().Any(c => c.CardNameEnum == cardName))
             {
