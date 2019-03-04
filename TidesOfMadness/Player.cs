@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -43,24 +44,22 @@ namespace TidesOfMadness
                 CardsInPlay.CardsInCollection[CardsInPlay.CardsInCollection.Count - 1].DoubleScore = true;
             }
 
-            CardsInHand.CardsInCollection.Remove(card);
-            CardsInPlay.CardsInCollection.Add(card);
+            CardsInHand.MoveCardToAnotherCollection(card, CardsInPlay);
 
             CardsPlayedThisRound++;
         }
 
         public void ReturnCardToHand(Card card)
         {
-            CardsInPlay.CardsInCollection.Remove(card);
-            CardsInHand.CardsInCollection.Add(card);
+            CardsInPlay.MoveCardToAnotherCollection(card, CardsInHand);
         }
 
-        public List<Card> GetCardsInHand()
+        public BindingList<Card> GetCardsInHand()
         {
             return this.CardsInHand.CardsInCollection;
         }
 
-        public List<Card> GetCardsInPlay()
+        public BindingList<Card> GetCardsInPlay()
         {
             return this.CardsInPlay.CardsInCollection;
         }

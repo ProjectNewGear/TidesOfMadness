@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -71,15 +72,20 @@ namespace TidesOfMadness
                     }
                 case GameStates.PickUpCards:
                     {
+                        GameState.CurrentGameState = GameStates.ChooseCardToReplay;
                         GameState.RequirePlayerInput = true;
                         break;
                     }
                 case GameStates.ChooseCardToReplay:
                     {
+                        GameState.CurrentGameState = GameStates.ChooseCardToDiscard;
+                        GameState.RequirePlayerInput = true;
                         break;
                     }
                 case GameStates.ChooseCardToDiscard:
                     {
+                        GameState.CurrentGameState = GameStates.PlayCards;
+                        GameState.RequirePlayerInput = true;
                         break;
                     }
                 default:
@@ -96,6 +102,7 @@ namespace TidesOfMadness
             GameState.AIPlayer = new AIPlayer("Opponent");
             GameState.AppendToGameLog("Welcome to Tides of Madness!");
             GameState.Deck =  DeckGenerator.GenerateDeck();
+            GameState.DiscardPile = new CardCollection();
             GameState.Deck.Shuffle();
             GameState.CurrentRound = 1;
             GameState.CurrentGameState = GameStates.Setup;
@@ -153,6 +160,14 @@ namespace TidesOfMadness
             aiPlayer.PlaySelectedCard(aiCard);
             GameState.AppendToGameLog($"{humanPlayer.Name} plays {playerCard.CardNameDisplay} from hand");
             GameState.AppendToGameLog($"{aiPlayer.Name} plays {aiCard.CardNameDisplay} from hand");
+        }
+
+        private void EachPlayerDiscardsOneCard(Player humanPlayer, AIPlayer aiPlayer, Card playerCard, Card aiCard)
+        {
+            humanPlayer.CardsInHand.MoveCardToAnotherCollection(playerCard, GameState.DiscardPile);
+            aiPlayer.CardsInHand.MoveCardToAnotherCollection(aiCard, GameState.DiscardPile);
+            GameState.AppendToGameLog($"{humanPlayer.Name} discards {playerCard.CardNameDisplay} from hand");
+            GameState.AppendToGameLog($"{aiPlayer.Name} discards {aiCard.CardNameDisplay} from hand");
         }
 
         private Player SeeWhoHasDreamlands(Player humanPlayer, AIPlayer aiPlayer)
@@ -275,7 +290,7 @@ namespace TidesOfMadness
             ResetDreamlandsSuit(GetAIPlayer().GetCardsInPlay());
         }
 
-        private void ResetDreamlandsSuit(List<Card> cards)
+        private void ResetDreamlandsSuit(BindingList<Card> cards)
         {
             foreach(Card card in cards)
             {
@@ -292,9 +307,12 @@ namespace TidesOfMadness
             secondPlayer.Score += ScoreCalculator.CalculateScore(secondPlayer, firstPlayer);
         }
 
-        private void PickUpCards(Player player, List<Card> selectedCards)
+        private void PickUpCards(Player player, BindingList<Card> selectedCards)
         {
-            player.CardsInHand.CardsInCollection = selectedCards;
+            foreach (Card card in selectedCards)
+            {
+                player.ReturnCardToHand(card);
+            }
         }
 
         private void ReplayCard()
@@ -305,10 +323,31 @@ namespace TidesOfMadness
 
         private void SwapPlayerHands(Player firstPlayer, Player secondPlayer)
         {
-            CardCollection temp = new CardCollection();
-            temp = firstPlayer.CardsInHand;
-            firstPlayer.CardsInHand = secondPlayer.CardsInHand;
-            secondPlayer.CardsInHand = temp;
+            BindingList<Card> temp1 = new BindingList<Card>();
+            BindingList<Card> temp2 = new BindingList<Card>();
+
+            foreach (Card card in firstPlayer.GetCardsInHand())
+            {
+                temp1.Add(card);
+            }
+
+            foreach (Card card in secondPlayer.GetCardsInHand())
+            {
+                temp2.Add(card);
+            }
+
+            firstPlayer.CardsInHand.CardsInCollection.Clear();
+            secondPlayer.CardsInHand.CardsInCollection.Clear();
+
+            foreach (Card card in temp1)
+            {
+                secondPlayer.CardsInHand.AddCardToCollection(card);
+            }
+
+            foreach (Card card in temp2)
+            {
+                firstPlayer.CardsInHand.AddCardToCollection(card);
+            }
         }
 
         public void ActOnPlayerInput(PlayerInput input)
@@ -359,8 +398,16 @@ namespace TidesOfMadness
                         }
                         break;
                     case GameStates.ChooseCardToReplay:
+                        playerCard = input.SelectedCards[0];
+                        aiCard = this.GetAIPlayer().ChooseCardToPlay();
+                        EachPlayerPlaysOneCard(this.GetHumanPlayer(), this.GetAIPlayer(), playerCard, aiCard);
                         break;
                     case GameStates.ChooseCardToDiscard:
+                        playerCard = input.SelectedCards[0];
+                        aiCard = this.GetAIPlayer().ChooseCardToPlay();
+                        EachPlayerDiscardsOneCard(this.GetHumanPlayer(), this.GetAIPlayer(), playerCard, aiCard);
+                        GameState.CurrentRound++;
+                        SetUpRound();
                         break;
                     default:
                         break;

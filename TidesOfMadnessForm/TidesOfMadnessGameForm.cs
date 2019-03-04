@@ -13,7 +13,7 @@ namespace TidesOfMadnessForm
 {
     public partial class TidesOfMadnessForm : Form
     {
-        GameDriver Driver;
+        GameDriver driver;
 
         public TidesOfMadnessForm()
         {
@@ -22,21 +22,25 @@ namespace TidesOfMadnessForm
 
         private void TidesOfMadnessForm_Load(object sender, EventArgs e)
         {
-            Driver = new GameDriver();
-            Driver.InitializeGame();
-            UpdateGameLog(Driver.GetGameLog());
+            driver = new GameDriver();
+            driver.InitializeGame();
+            UpdateGameLog(driver.GetGameLog());
             UpdateScoreDisplays();
 
             pbxCardImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            lbxHumanHand.DataSource = driver.GetHumanPlayer().GetCardsInHand();
             lbxHumanHand.DisplayMember = "CardNameDisplay";
+
+            lbxHumanInPlay.DataSource = driver.GetHumanPlayer().GetCardsInPlay();
             lbxHumanInPlay.DisplayMember = "CardNameDisplay";
+
+            lbxOppInPlay.DataSource = driver.GetAIPlayer().GetCardsInPlay();
             lbxOppInPlay.DisplayMember = "CardNameDisplay";
 
-            UpdateCardDisplays();
             pbxCardImage.ImageLocation = SetArtFromListBox(lbxHumanHand, 0);
 
-            UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
-            UpdateUISettings(Driver.GetCurrentGameState());
+            UpdatePlayerInstructions(driver.GetCurrentGameState(), lblPlayerInstructions);
+            UpdateUISettings(driver.GetCurrentGameState());
         }
 
         private void UpdatePlayerInstructions(GameStates currentState, Label playerInstructions)
@@ -76,7 +80,7 @@ namespace TidesOfMadnessForm
                     }
                 case GameStates.ChooseCardToReplay:
                     {
-                        returnText = "Choose a card to replay immediately.";
+                        returnText = "Choose a card to immediately replay.";
                         break;
                     }
                 case GameStates.ChooseCardToDiscard:
@@ -112,7 +116,7 @@ namespace TidesOfMadnessForm
                         cbxPlayerChoice.Visible = true;
                         cbxPlayerChoice.SelectedItem = null;
                         cbxPlayerChoice.Items.Clear();
-                        foreach (ResolveMadnessOption option in Driver.MadnessOptions)
+                        foreach (ResolveMadnessOption option in driver.MadnessOptions)
                         {
                             cbxPlayerChoice.Items.Add(option);
                         }
@@ -126,7 +130,7 @@ namespace TidesOfMadnessForm
                         cbxPlayerChoice.Visible = true;
                         cbxPlayerChoice.SelectedItem = null;
                         cbxPlayerChoice.Items.Clear();
-                        foreach (SuitOption option in Driver.SuitOptions)
+                        foreach (SuitOption option in driver.SuitOptions)
                         {
                             cbxPlayerChoice.Items.Add(option);
                         }
@@ -172,44 +176,20 @@ namespace TidesOfMadnessForm
             _tempGameStateLabel.Text = $"Gamestate = {currentState.ToString()}";
         }
 
-        private void UpdateCardDisplays()
-        {
-            lbxHumanHand.Items.Clear();
-
-            foreach (Card card in Driver.GetHumanPlayer().CardsInHand.CardsInCollection)
-            {
-                lbxHumanHand.Items.Add(card);
-            }
-
-            lbxHumanInPlay.Items.Clear();
-
-            foreach (Card card in Driver.GetHumanPlayer().CardsInPlay.CardsInCollection)
-            {
-                lbxHumanInPlay.Items.Add(card);
-            }
-
-            lbxOppInPlay.Items.Clear();
-
-            foreach (Card card in Driver.GetAIPlayer().CardsInPlay.CardsInCollection)
-            {
-                lbxOppInPlay.Items.Add(card);
-            }
-        }
-
         private void UpdateScoreDisplays()
         {
-            lblOppPointsTotal.Text = $"Points Total: {Driver.GetAIPlayer().Score}";
-            lblOppMadnessTotal.Text = $"Madness Total: {Driver.GetAIPlayer().MadnessTotal}";
-            lblOppMadnessThisRound.Text = $"Madness This Round: {Driver.GetAIPlayer().MadnessThisRound}";
+            lblOppPointsTotal.Text = $"Points Total: {driver.GetAIPlayer().Score}";
+            lblOppMadnessTotal.Text = $"Madness Total: {driver.GetAIPlayer().MadnessTotal}";
+            lblOppMadnessThisRound.Text = $"Madness This Round: {driver.GetAIPlayer().MadnessThisRound}";
 
-            lblPlayerPointsTotal.Text = $"Points Total: {Driver.GetHumanPlayer().Score}";
-            lblPlayerMadnessTotal.Text = $"Madness Total: {Driver.GetHumanPlayer().MadnessTotal}";
-            lblPlayerMadnessThisRound.Text = $"Madness This Round: {Driver.GetHumanPlayer().MadnessThisRound}";
+            lblPlayerPointsTotal.Text = $"Points Total: {driver.GetHumanPlayer().Score}";
+            lblPlayerMadnessTotal.Text = $"Madness Total: {driver.GetHumanPlayer().MadnessTotal}";
+            lblPlayerMadnessThisRound.Text = $"Madness This Round: {driver.GetHumanPlayer().MadnessThisRound}";
         }
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            switch (Driver.GetCurrentGameState())
+            switch (driver.GetCurrentGameState())
             {
                 case GameStates.Setup:
                     {
@@ -217,6 +197,8 @@ namespace TidesOfMadnessForm
                         break;
                     }
                 case GameStates.PlayCards:
+                case GameStates.ChooseCardToReplay:
+                case GameStates.ChooseCardToDiscard:
                     {
                         Card selectedCard = (Card)lbxHumanHand.SelectedItem;
 
@@ -224,10 +206,9 @@ namespace TidesOfMadnessForm
                         {
                             PlayerInput input = new PlayerInput();
                             input.SelectedCards.Add(selectedCard);
-                            Driver.ActOnPlayerInput(input);
-                            UpdateCardDisplays();
-                            UpdateUISettings(Driver.GetCurrentGameState());
-                            UpdateGameLog(Driver.GetGameLog());
+                            driver.ActOnPlayerInput(input);
+                            UpdateUISettings(driver.GetCurrentGameState());
+                            UpdateGameLog(driver.GetGameLog());
                         }
                         break;
                     }
@@ -236,18 +217,18 @@ namespace TidesOfMadnessForm
                         PlayerInput input = new PlayerInput();
                         ResolveMadnessOption chosenOption = (ResolveMadnessOption)cbxPlayerChoice.SelectedItem;
                         input.SelectedBonus = chosenOption.Bonus;
-                        Driver.ActOnPlayerInput(input);
-                        UpdateUISettings(Driver.GetCurrentGameState());
-                        UpdateGameLog(Driver.GetGameLog());
+                        driver.ActOnPlayerInput(input);
+                        UpdateUISettings(driver.GetCurrentGameState());
+                        UpdateGameLog(driver.GetGameLog());
                         break;
                     }
                 case GameStates.SetDreamlands:
                     {
                         PlayerInput input = new PlayerInput();
                         input.SelectedSuit = (SuitOption)cbxPlayerChoice.SelectedItem;
-                        Driver.ActOnPlayerInput(input);
-                        UpdateUISettings(Driver.GetCurrentGameState());
-                        UpdateGameLog(Driver.GetGameLog());
+                        driver.ActOnPlayerInput(input);
+                        UpdateUISettings(driver.GetCurrentGameState());
+                        UpdateGameLog(driver.GetGameLog());
                         break;
                     }
                 case GameStates.Scoring:
@@ -256,23 +237,21 @@ namespace TidesOfMadnessForm
                     }
                 case GameStates.PickUpCards:
                     {
-                        List<Card> selectedCards = lbxHumanInPlay.SelectedItems.Cast<Card>().ToList();
+                        BindingList<Card> selectedCards = new BindingList<Card>();
+
+                        foreach(Card card in lbxHumanInPlay.SelectedItems)
+                        {
+                            selectedCards.Add(card);
+                        }
+
                         if (selectedCards.Count == 5)
                         {
                             PlayerInput input = new PlayerInput();
                             input.SelectedCards = selectedCards;
-                            Driver.ActOnPlayerInput(input);
-                            UpdateUISettings(Driver.GetCurrentGameState());
-                            UpdateGameLog(Driver.GetGameLog());
+                            driver.ActOnPlayerInput(input);
+                            UpdateUISettings(driver.GetCurrentGameState());
+                            UpdateGameLog(driver.GetGameLog());
                         }
-                        break;
-                    }
-                case GameStates.ChooseCardToReplay:
-                    {
-                        break;
-                    }
-                case GameStates.ChooseCardToDiscard:
-                    {
                         break;
                     }
                 default:
@@ -280,7 +259,7 @@ namespace TidesOfMadnessForm
                         break;
                     }
             }
-            UpdatePlayerInstructions(Driver.GetCurrentGameState(), lblPlayerInstructions);
+            UpdatePlayerInstructions(driver.GetCurrentGameState(), lblPlayerInstructions);
             UpdateScoreDisplays();
         }
 
@@ -295,7 +274,7 @@ namespace TidesOfMadnessForm
         }
 
         private string SetArtFromListBox(ListBox box, int indexNum)
-        { 
+        {
             if (indexNum >= 0 && indexNum <= box.Items.Count)
             {
                 Card currentCard = (Card)box.Items[indexNum];

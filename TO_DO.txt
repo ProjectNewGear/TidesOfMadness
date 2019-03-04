@@ -6,4 +6,6 @@
 
 ---NEXT TIME ON DRAGONBALL Z:---
 
---Refresh list boxes on UI after returning five cards (data binding? BindingList?)
+--Check for Madness losses
+--Final scoring
+--Reset?

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -7,11 +8,11 @@ namespace TidesOfMadness
 {
     public class CardCollection
     {
-        public List<Card> CardsInCollection;
+        public BindingList<Card> CardsInCollection;
 
         public CardCollection()
         {
-            CardsInCollection = new List<Card>();
+            CardsInCollection = new BindingList<Card>();
         }
 
 
@@ -22,7 +23,7 @@ namespace TidesOfMadness
             //Then assign the new one to CardsInCollection
             for (int i = 0; i < 50; i++)
             {
-                List<Card> newList = new List<Card>();
+                BindingList<Card> newList = new BindingList<Card>();
                 while (CardsInCollection.Count != 0)
                 {
                     Random random = new Random();
@@ -54,9 +55,9 @@ namespace TidesOfMadness
             return null;
         }
 
-        public List<Card> GetTopCards(int numberOfCards)
+        public BindingList<Card> GetTopCards(int numberOfCards)
         {
-            List<Card> cardsToAdd = new List<Card>();
+            BindingList<Card> cardsToAdd = new BindingList<Card>();
             for (int i = 0; i < numberOfCards; i++)
             {
                 cardsToAdd.Add(GetTopCard());
@@ -69,7 +70,7 @@ namespace TidesOfMadness
             CardsInCollection.Add(cardToAdd);
         }
 
-        public void AddCardToCollection(List<Card> cardsToAdd)
+        public void AddCardToCollection(BindingList<Card> cardsToAdd)
         {
             foreach (Card cardToAdd in cardsToAdd)
             {
@@ -80,6 +81,13 @@ namespace TidesOfMadness
         public Card GetCardByEnumName(CardNames cardName)
         {
             return this.CardsInCollection.FirstOrDefault(c => c.CardNameEnum == cardName);
+        }
+
+        public void MoveCardToAnotherCollection(Card card, CardCollection collection)
+        {
+            //TO DO: ERROR HANDLING
+            this.CardsInCollection.Remove(card);
+            collection.AddCardToCollection(card);
         }
     }
 }

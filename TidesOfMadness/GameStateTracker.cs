@@ -11,6 +11,7 @@ namespace TidesOfMadness
         public CardCollection Deck { get; set; }
         public GameStates CurrentGameState { get; set; }
         public int CurrentRound { get; set; }
+        public CardCollection DiscardPile { get; set; }
 
         public string GameLog { get; set; }
         public bool RequirePlayerInput { get; set; }
