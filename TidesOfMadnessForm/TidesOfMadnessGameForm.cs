@@ -28,6 +28,8 @@ namespace TidesOfMadnessForm
             UpdateScoreDisplays();
 
             pbxCardImage.SizeMode = PictureBoxSizeMode.StretchImage;
+
+
             lbxHumanHand.DataSource = driver.GetHumanPlayer().GetCardsInHand();
             lbxHumanHand.DisplayMember = "CardNameDisplay";
 
@@ -36,6 +38,9 @@ namespace TidesOfMadnessForm
 
             lbxOppInPlay.DataSource = driver.GetAIPlayer().GetCardsInPlay();
             lbxOppInPlay.DisplayMember = "CardNameDisplay";
+
+            lbxDiscardPile.DataSource = driver.GameState.DiscardPile.CardsInCollection;
+            lbxDiscardPile.DisplayMember = "CardNameDisplay";
 
             pbxCardImage.ImageLocation = SetArtFromListBox(lbxHumanHand, 0);
 
@@ -291,6 +296,11 @@ namespace TidesOfMadnessForm
         private void lbxOppInPlay_SelectedIndexChanged(object sender, EventArgs e)
         {
             pbxCardImage.ImageLocation = SetArtFromListBox(lbxOppInPlay, lbxOppInPlay.SelectedIndex);
+        }
+
+        private void lbxDiscardPile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pbxCardImage.ImageLocation = SetArtFromListBox(lbxDiscardPile, lbxDiscardPile.SelectedIndex);
         }
     }
 }

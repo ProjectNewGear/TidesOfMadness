@@ -62,6 +62,7 @@ namespace TidesOfMadness
         Scoring,
         PickUpCards,
         ChooseCardToReplay,
-        ChooseCardToDiscard
+        ChooseCardToDiscard,
+        GameOver
     }
 }

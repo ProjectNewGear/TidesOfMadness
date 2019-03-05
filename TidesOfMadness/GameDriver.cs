@@ -66,8 +66,15 @@ namespace TidesOfMadness
                     }
                 case GameStates.Scoring:
                     {
-                        GameState.CurrentGameState = GameStates.PickUpCards;
-                        GameState.RequirePlayerInput = true;
+                        if (GameState.HumanPlayer.MadnessTotal >= 9 || GameState.AIPlayer.MadnessTotal >= 9 || GameState.CurrentRound >= 3)
+                        {
+                            GameState.CurrentGameState = GameStates.GameOver;
+                        }
+                        else
+                        {
+                            GameState.CurrentGameState = GameStates.PickUpCards;
+                            GameState.RequirePlayerInput = true;
+                        }
                         break;
                     }
                 case GameStates.PickUpCards:
@@ -85,6 +92,11 @@ namespace TidesOfMadness
                 case GameStates.ChooseCardToDiscard:
                     {
                         GameState.CurrentGameState = GameStates.PlayCards;
+                        GameState.RequirePlayerInput = true;
+                        break;
+                    }
+                case GameStates.GameOver:
+                    {
                         GameState.RequirePlayerInput = true;
                         break;
                     }
@@ -307,6 +319,45 @@ namespace TidesOfMadness
             secondPlayer.Score += ScoreCalculator.CalculateScore(secondPlayer, firstPlayer);
         }
 
+        private void CheckGameOverCondition(Player firstPlayer, Player secondPlayer)
+        {
+            if(firstPlayer.MadnessTotal >= 9 && secondPlayer.MadnessTotal >= 9)
+            {
+                GameState.AppendToGameLog("GAME OVER - Both players have 9 Madness tokens!");
+                return;
+            }
+
+            if(firstPlayer.MadnessTotal >= 9)
+            {
+                GameState.AppendToGameLog("GAME OVER - Human has 9 Madness tokens; AI wins!");
+                return;
+            }
+
+            if(secondPlayer.MadnessTotal >= 9)
+            {
+                GameState.AppendToGameLog("GAME OVER - AI has 9 Madness tokens; Human wins!");
+                return;
+            }
+
+            if(firstPlayer.Score == secondPlayer.Score)
+            {
+                GameState.AppendToGameLog($"GAME OVER - Players tie with {firstPlayer.Score} points!");
+                return;
+            }
+
+            if (firstPlayer.Score > secondPlayer.Score)
+            {
+                GameState.AppendToGameLog($"GAME OVER - Human wins with a score of {firstPlayer.Score} points!");
+                return;
+            }
+
+            if (secondPlayer.Score > firstPlayer.Score)
+            {
+                GameState.AppendToGameLog($"GAME OVER - AI wins with a score of {secondPlayer.Score} points!");
+                return;
+            }
+        }
+
         private void PickUpCards(Player player, BindingList<Card> selectedCards)
         {
             foreach (Card card in selectedCards)
@@ -408,6 +459,9 @@ namespace TidesOfMadness
                         EachPlayerDiscardsOneCard(this.GetHumanPlayer(), this.GetAIPlayer(), playerCard, aiCard);
                         GameState.CurrentRound++;
                         SetUpRound();
+                        break;
+                    case GameStates.GameOver:
+                        CheckGameOverCondition(this.GetHumanPlayer(), this.GetAIPlayer());
                         break;
                     default:
                         break;

@@ -44,8 +44,10 @@
             this.lblPlayerPointsTotal = new System.Windows.Forms.Label();
             this.lblPlayerMadnessThisRound = new System.Windows.Forms.Label();
             this.lblPlayerMadnessTotal = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblCardsInHand = new System.Windows.Forms.Label();
             this._tempGameStateLabel = new System.Windows.Forms.Label();
+            this.lblDiscardPile = new System.Windows.Forms.Label();
+            this.lbxDiscardPile = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbxCardImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -204,15 +206,15 @@
             this.lblPlayerMadnessTotal.TabIndex = 13;
             this.lblPlayerMadnessTotal.Text = "Madness Total:";
             // 
-            // label1
+            // lblCardsInHand
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(7, 399);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(186, 29);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "Cards in Hand";
+            this.lblCardsInHand.AutoSize = true;
+            this.lblCardsInHand.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCardsInHand.Location = new System.Drawing.Point(7, 399);
+            this.lblCardsInHand.Name = "lblCardsInHand";
+            this.lblCardsInHand.Size = new System.Drawing.Size(186, 29);
+            this.lblCardsInHand.TabIndex = 16;
+            this.lblCardsInHand.Text = "Cards in Hand";
             // 
             // _tempGameStateLabel
             // 
@@ -224,13 +226,34 @@
             this._tempGameStateLabel.TabIndex = 17;
             this._tempGameStateLabel.Text = "Gamestate = X";
             // 
+            // lblDiscardPile
+            // 
+            this.lblDiscardPile.AutoSize = true;
+            this.lblDiscardPile.Font = new System.Drawing.Font("Percolator Expert", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDiscardPile.Location = new System.Drawing.Point(662, 19);
+            this.lblDiscardPile.Name = "lblDiscardPile";
+            this.lblDiscardPile.Size = new System.Drawing.Size(167, 29);
+            this.lblDiscardPile.TabIndex = 19;
+            this.lblDiscardPile.Text = "Discard Pile";
+            // 
+            // lbxDiscardPile
+            // 
+            this.lbxDiscardPile.FormattingEnabled = true;
+            this.lbxDiscardPile.Location = new System.Drawing.Point(667, 51);
+            this.lbxDiscardPile.Name = "lbxDiscardPile";
+            this.lbxDiscardPile.Size = new System.Drawing.Size(319, 95);
+            this.lbxDiscardPile.TabIndex = 18;
+            this.lbxDiscardPile.SelectedIndexChanged += new System.EventHandler(this.lbxDiscardPile_SelectedIndexChanged);
+            // 
             // TidesOfMadnessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1416, 824);
+            this.Controls.Add(this.lblDiscardPile);
+            this.Controls.Add(this.lbxDiscardPile);
             this.Controls.Add(this._tempGameStateLabel);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblCardsInHand);
             this.Controls.Add(this.lblPlayerPointsTotal);
             this.Controls.Add(this.lblPlayerMadnessThisRound);
             this.Controls.Add(this.lblPlayerMadnessTotal);
@@ -274,8 +297,10 @@
         private System.Windows.Forms.Label lblPlayerPointsTotal;
         private System.Windows.Forms.Label lblPlayerMadnessThisRound;
         private System.Windows.Forms.Label lblPlayerMadnessTotal;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblCardsInHand;
         private System.Windows.Forms.Label _tempGameStateLabel;
+        private System.Windows.Forms.Label lblDiscardPile;
+        private System.Windows.Forms.ListBox lbxDiscardPile;
     }
 }
 

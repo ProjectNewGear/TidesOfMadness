@@ -6,6 +6,5 @@
 
 ---NEXT TIME ON DRAGONBALL Z:---
 
---Check for Madness losses
---Final scoring
---Reset?
+--Reset Game
+--Madness Scoring should be its own phase
