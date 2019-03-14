@@ -22,5 +22,31 @@ namespace TidesOfMadness
         {
             GameLog += textToAppend + Environment.NewLine;
         }
+
+        private string CodeDuplicationTest(int param1, int param2)
+        {
+            int var1;
+            int var2;
+
+            if (param1 == param2)
+            {
+                var1 = 5;
+                var2 = 3;
+            }
+            else if (param1 * 2 == param2)
+            {
+                var1 = 6;
+                var2 = 3;
+            }
+            else
+            {
+                var1 = 4;
+                var2 = var1 + 7;
+            }
+
+            string var3 = Convert.ToString(var1 + var2);
+
+            return var3;
+        }
     }
 }
