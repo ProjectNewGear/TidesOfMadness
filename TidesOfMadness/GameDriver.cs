@@ -180,6 +180,16 @@ namespace TidesOfMadness
             aiPlayer.CardsInHand.MoveCardToAnotherCollection(aiCard, GameState.DiscardPile);
             GameState.AppendToGameLog($"{humanPlayer.Name} discards {playerCard.CardNameDisplay} from hand");
             GameState.AppendToGameLog($"{aiPlayer.Name} discards {aiCard.CardNameDisplay} from hand");
+
+            int test = 1;
+            if (test == 1)
+            {
+                humanPlayer.CardsInHand.MoveCardToAnotherCollection(playerCard, GameState.DiscardPile);
+            }
+            else
+            {
+                aiPlayer.CardsInHand.MoveCardToAnotherCollection(aiCard, GameState.DiscardPile);
+            }
         }
 
         private Player SeeWhoHasDreamlands(Player humanPlayer, AIPlayer aiPlayer)

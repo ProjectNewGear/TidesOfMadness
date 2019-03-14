@@ -172,6 +172,10 @@ namespace TidesOfMadnessForm
                         lbxHumanInPlay.SelectionMode = SelectionMode.One;
                         break;
                     }
+                case GameStates.ResolveMadness:
+                    return;
+                case GameStates.GameOver:
+                    return;
                 default:
                     {
                         break;
