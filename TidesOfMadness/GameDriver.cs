@@ -261,6 +261,8 @@ namespace TidesOfMadness
 
         private void ResolveMadnessOnePlayer(Player player)
         {
+            int thisMakesItWorse = 0;   //Introducing unused code for testing purposes
+
             foreach (Card card in player.GetCardsInPlay())
             {
                 if (card.HasMadness)
@@ -372,7 +374,7 @@ namespace TidesOfMadness
             //Then move to the Setup state
         }
 
-        private void SwapPlayerHands(Player firstPlayer, Player secondPlayer)
+        private static void SwapPlayerHands(Player firstPlayer, Player secondPlayer)
         {
             BindingList<Card> temp1 = new BindingList<Card>();
             BindingList<Card> temp2 = new BindingList<Card>();
@@ -462,8 +464,6 @@ namespace TidesOfMadness
                         break;
                     case GameStates.GameOver:
                         CheckGameOverCondition(this.GetHumanPlayer(), this.GetAIPlayer());
-                        break;
-                    default:
                         break;
                         //BVJ TO DO: Error handling
                 }
