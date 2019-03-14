@@ -366,12 +366,6 @@ namespace TidesOfMadness
             }
         }
 
-        private void ReplayCard()
-        {
-            //Each player chooses a card to replay
-            //Then move to the Setup state
-        }
-
         private void SwapPlayerHands(Player firstPlayer, Player secondPlayer)
         {
             BindingList<Card> temp1 = new BindingList<Card>();

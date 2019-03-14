@@ -7,7 +7,13 @@ namespace TidesOfMadness
 {
     public class PlayerInput
     {
-        public BindingList<Card> SelectedCards;
+        private BindingList<Card> SelectedCards;
+        public BindingList<Card> SelectedCardsTestProperty
+        {
+            get { return SelectedCards; }
+            set { SelectedCards = value; }
+        }
+
         public SuitOption SelectedSuit;
         public MadnessBonus SelectedBonus;
 

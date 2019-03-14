@@ -11,38 +11,6 @@ namespace TidesConsoleTest
     {
         static void Main(string[] args)
         {
-            //GameDriver controller = new GameDriver();
-            //controller.InitializeGame();
-
-            ////foreach(Card card in controller.Deck.CardsInCollection)
-            ////{
-            ////    Console.WriteLine(card.GetDisplayName());
-            ////}
-            ////controller.Deck.Shuffle();
-            ////Console.WriteLine();
-            ////foreach (Card card in controller.Deck.CardsInCollection)
-            ////{
-            ////    Console.WriteLine(card.GetDisplayName());
-            ////}
-            ////Console.ReadKey();
-
-            //Console.WriteLine("Player's hand: ");
-
-            //foreach(Card card in controller.GameState.HumanPlayer.CardsInHand.CardsInCollection)
-            //{
-            //    Console.WriteLine(card.GetDisplayName());
-            //}
-
-            //Console.WriteLine();
-            //Console.WriteLine("Opponent's hand: ");
-
-            //foreach (Card card in controller.GameState.AIPlayer.CardsInHand.CardsInCollection)
-            //{
-            //    Console.WriteLine(card.GetDisplayName());
-            //}
-
-            //Console.ReadLine();
-
             CardCollection deck = DeckGenerator.GenerateDeck();
 
 
@@ -53,8 +21,6 @@ namespace TidesConsoleTest
             testHand.AddCardToCollection(deck.CardsInCollection.First(c => c.CardNameEnum == CardNames.Deep_Ones));
             testHand.AddCardToCollection(deck.CardsInCollection.First(c => c.CardNameEnum == CardNames.Rlyeh));
             testHand.AddCardToCollection(deck.CardsInCollection.First(c => c.CardNameEnum == CardNames.Elder_Things));
-
-            Card testCard = deck.CardsInCollection.First(c => c.CardNameEnum == CardNames.Miskatonic_University);
 
             CardCollection testHand2 = new CardCollection();
 
