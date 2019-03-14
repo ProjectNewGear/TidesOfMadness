@@ -181,8 +181,8 @@ namespace TidesOfMadness
             GameState.AppendToGameLog($"{humanPlayer.Name} discards {playerCard.CardNameDisplay} from hand");
             GameState.AppendToGameLog($"{aiPlayer.Name} discards {aiCard.CardNameDisplay} from hand");
 
-            int test = 1;
-            if (test == 1)
+            bool test = true;
+            if (test.Equals(true))
             {
                 humanPlayer.CardsInHand.MoveCardToAnotherCollection(playerCard, GameState.DiscardPile);
             }
