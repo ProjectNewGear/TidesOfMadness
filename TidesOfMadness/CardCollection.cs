@@ -21,6 +21,8 @@ namespace TidesOfMadness
             set { cardsInCollection = value;  }
         }
 
+        private string garbageVariable;
+
         public void Shuffle()
         {
             //Randomize the cards in this CardCollection
