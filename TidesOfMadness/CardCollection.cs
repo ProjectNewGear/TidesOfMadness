@@ -41,7 +41,7 @@ namespace TidesOfMadness
             //If it is, return null (log an error?)
             //If it is not, return the top card
 
-            //TO DO: Add error logging if the list is empty;
+            //TO DO: Add error logging if the list is empty
             Card cardToReturn;
 
             if (CardsInCollection.Count > 0)
