@@ -8,13 +8,18 @@ namespace TidesOfMadness
 {
     public class CardCollection
     {
-        public BindingList<Card> CardsInCollection;
+        private BindingList<Card> cardsInCollection;
 
         public CardCollection()
         {
             CardsInCollection = new BindingList<Card>();
         }
 
+        public BindingList<Card> CardsInCollection
+        {
+            get { return cardsInCollection; }
+            set { cardsInCollection = value;  }
+        }
 
         public void Shuffle()
         {
