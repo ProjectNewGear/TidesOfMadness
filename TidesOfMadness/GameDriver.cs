@@ -9,11 +9,13 @@ namespace TidesOfMadness
 {
     public class GameDriver
     {
-        public List<ResolveMadnessOption> MadnessOptions;   //TODO: This should probably go elsewhere
-        public List<SuitOption> SuitOptions;                //TODO: This too
+        private List<ResolveMadnessOption> madnessOptions;   //TODO: This should probably go elsewhere
+        private List<SuitOption> suitOptions;                //TODO: This too
 
         public GameStateTracker GameState;
-        
+
+        public List<ResolveMadnessOption> MadnessOptions { get => madnessOptions; set => madnessOptions = value; }
+        public List<SuitOption> SuitOptions { get => suitOptions; set => suitOptions = value; }
 
         private void RefreshStatesAndInputStatus()
         {
