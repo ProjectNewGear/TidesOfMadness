@@ -66,7 +66,7 @@ namespace TidesOfMadness
 
         public static int CalculateScoreBySet(List<Suits> suitsToCheck, int pointsPerSet, CardCollection playerCollection, int multiplier)
         {
-            int minimumSuits = 6; //Can never have more than this - 5 of a suit plus one copy;
+            int minimumSuits = 6; //Can never have more than this - 5 of a suit plus one copy
 
             foreach (Suits currentSuit in suitsToCheck)
             {

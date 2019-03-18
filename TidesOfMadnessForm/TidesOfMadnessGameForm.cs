@@ -110,6 +110,7 @@ namespace TidesOfMadnessForm
                         break;
                     }
                 case GameStates.PlayCards:
+                case GameStates.ChooseCardToReplay:
                     {
                         cbxPlayerChoice.Visible = false;
                         lbxHumanInPlay.ClearSelected();
@@ -156,13 +157,6 @@ namespace TidesOfMadnessForm
                         cbxPlayerChoice.Visible = false;
                         lbxHumanInPlay.ClearSelected();
                         lbxHumanInPlay.SelectionMode = SelectionMode.MultiSimple;
-                        break;
-                    }
-                case GameStates.ChooseCardToReplay:
-                    {
-                        cbxPlayerChoice.Visible = false;
-                        lbxHumanInPlay.ClearSelected();
-                        lbxHumanInPlay.SelectionMode = SelectionMode.One;
                         break;
                     }
                 case GameStates.ChooseCardToDiscard:
