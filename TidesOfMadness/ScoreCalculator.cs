@@ -117,6 +117,7 @@ namespace TidesOfMadness
 
         public static int CalculateScoreByMadness(int myMadness, int multiplier)
         {
+            int garbageVariable = 3;
             return myMadness * multiplier;
         }
     }

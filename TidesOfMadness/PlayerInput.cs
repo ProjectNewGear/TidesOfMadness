@@ -7,9 +7,9 @@ namespace TidesOfMadness
 {
     public class PlayerInput
     {
-        public BindingList<Card> SelectedCards;
-        public SuitOption SelectedSuit;
-        public MadnessBonus SelectedBonus;
+        public BindingList<Card> SelectedCards { get; set; }
+        public SuitOption SelectedSuit { get; set; }
+        public MadnessBonus SelectedBonus { get; set; }
 
         public PlayerInput()
         {
